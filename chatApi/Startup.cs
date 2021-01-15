@@ -1,15 +1,15 @@
+using chatApi.Data;
+using chatApi.Data.Models;
+using chatApi.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace chatApi
 {
@@ -24,6 +24,46 @@ namespace chatApi
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddScoped<IUserService, UserService>();
+
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+                     {
+                         options.SignIn.RequireConfirmedEmail = false;
+                     })
+                    .AddEntityFrameworkStores<ApplicationDbContext>()
+                    .AddDefaultTokenProviders();
+
+            services.AddIdentityServer()
+                    .AddDeveloperSigningCredential()
+                    .AddInMemoryPersistedGrants()
+                    .AddInMemoryIdentityResources(Config.GetIdentityResources())
+                    .AddInMemoryApiScopes(Config.GetAPIScopes())
+                    .AddInMemoryApiResources(Config.GetAPIs())
+                    .AddInMemoryClients(Config.GetClients())
+                    .AddAspNetIdentity<ApplicationUser>();
+
+            services.AddAuthentication("Bearer")
+                    .AddJwtBearer("Bearer", options =>
+                     {
+                         options.Authority = "https://localhost:44340/";
+
+                         options.Audience = "chatAPI";
+
+                         //options.RequireHttpsMetadata = false;
+
+                         options.TokenValidationParameters.ValidateIssuer = false;
+                     });
+
+            services.AddAuthorization(options =>
+            {
+                options.DefaultPolicy = new AuthorizationPolicyBuilder()
+                                       .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+                                       .RequireAuthenticatedUser()
+                                       .Build();
+            });
+
             services.AddControllers();
         }
 
@@ -38,6 +78,8 @@ namespace chatApi
 
             app.UseRouting();
 
+            app.UseIdentityServer();
+            
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
