@@ -25,7 +25,7 @@ namespace WebMonitoringApi.Services
                 { "grant_type", "password" },
                 { "username", username },
                 { "password", password },
-                { "scope", "chatAPI" }
+                { "scope", "WebMonitoringApi" }
             };
 
             var content = new FormUrlEncodedContent(values);

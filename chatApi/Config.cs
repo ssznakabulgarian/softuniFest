@@ -20,9 +20,9 @@ namespace WebMonitoringApi
         public static IEnumerable<ApiResource> GetAPIs()
         {
             List<ApiResource> apis = new List<ApiResource>();
-            apis.Add(new ApiResource("chatAPI", "chat API")
+            apis.Add(new ApiResource("WebMonitoringApi", "chat API")
             {
-                Scopes = { "chatAPI" }
+                Scopes = { "WebMonitoringApi" }
             });
 
             return apis;
@@ -32,7 +32,7 @@ namespace WebMonitoringApi
         {
             List<ApiScope> apiScopes = new List<ApiScope>
             {
-                new ApiScope("chatAPI", "chat API")
+                new ApiScope("WebMonitoringApi", "WebMonitoringApi")
             };
 
             return apiScopes;
@@ -44,7 +44,7 @@ namespace WebMonitoringApi
 
             Client apiClient = new Client
             {
-                ClientId = "api",
+                ClientId = "WebMonitoringApi",
                 RequireClientSecret = false,
                 AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
                 AllowedScopes = new List<string>
@@ -52,7 +52,7 @@ namespace WebMonitoringApi
                 IdentityServerConstants.StandardScopes.OpenId,
                 IdentityServerConstants.StandardScopes.Profile,
                 IdentityServerConstants.StandardScopes.Email,
-                "chatAPI"
+                "WebMonitoringApi"
             }
             };
 

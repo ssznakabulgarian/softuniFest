@@ -49,7 +49,7 @@ namespace WebMonitoringApi
                      {
                          options.Authority = "https://localhost:44340/";
 
-                         options.Audience = "chatAPI";
+                         options.Audience = "WebMonitoringApi";
 
                          //options.RequireHttpsMetadata = false;
 
