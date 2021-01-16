@@ -15,8 +15,5 @@ namespace WebMonitoringApi.Data
         public DbSet<Log> Logs { get; set; }
 
         public DbSet<Url> Urls { get; set; }
-        protected override void OnModelCreating(ModelBuilder builder)
-        {
-        }
     }
 }
