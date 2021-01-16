@@ -20,7 +20,7 @@ namespace WebMonitoringApi
         public static IEnumerable<ApiResource> GetAPIs()
         {
             List<ApiResource> apis = new List<ApiResource>();
-            apis.Add(new ApiResource("WebMonitoringApi", "chat API")
+            apis.Add(new ApiResource("WebMonitoringApi", "WebMonitoringApi")
             {
                 Scopes = { "WebMonitoringApi" }
             });
