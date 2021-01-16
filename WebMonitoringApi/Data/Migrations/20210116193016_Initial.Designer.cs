@@ -10,7 +10,7 @@ using WebMonitoringApi.Data;
 namespace WebMonitoringApi.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210116192124_Initial")]
+    [Migration("20210116193016_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
