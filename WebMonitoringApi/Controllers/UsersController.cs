@@ -37,7 +37,8 @@ namespace WebMonitoringApi.Controllers
         [Authorize]
         public async Task<IActionResult> Get()
         {
-            var result = await _userService.Get(User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
+            var id = User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
+            var result = await _userService.Get(id);
             return result != null ? Ok(result) : BadRequest("Invalid input");
         }
 
@@ -50,7 +51,21 @@ namespace WebMonitoringApi.Controllers
                                                    input.CurrentPassword,
                                                    input.CurrentEmail,
                                                    input.NewEmail);
-            return result!=null ? Ok(result) : BadRequest("Invalid input");
+
+            foreach (var identityResult in result)
+            {
+                if (!identityResult.Succeeded) return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> Delete()
+        {
+            var id = User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
+            var result = await _userService.Delete(id);
+            return result.Succeeded ? Ok(result) : BadRequest(result);
         }
     }
 }

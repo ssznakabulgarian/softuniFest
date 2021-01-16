@@ -1,11 +1,11 @@
-﻿using System.Net.Http;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 using WebMonitoringApi.Common;
-using System.Collections.Generic;
-using WebMonitoringApi.Data.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using WebMonitoringApi.Data;
+using WebMonitoringApi.Data.Models;
 
 namespace WebMonitoringApi.Services
 {
@@ -36,12 +36,12 @@ namespace WebMonitoringApi.Services
             var content = new FormUrlEncodedContent(values);
 
             var response = await httpClient.PostAsync("https://localhost:44340/connect/token", content);
-            
+
             return new LoginResult
             {
                 Succeeded = response.IsSuccessStatusCode,
                 Jwt = await response.Content.ReadAsStringAsync()
-            }; 
+            };
         }
 
         public async Task<IdentityResult> Create(string username, string password, string email)
@@ -49,19 +49,26 @@ namespace WebMonitoringApi.Services
             return await _userManager.CreateAsync(new ApplicationUser { UserName = username, Email = email }, password);
         }
 
-        public async Task<ApplicationUser> Update(string currentUserName, string newUserName, string currentPassword, string newPassword, string currentEmail, string newEmail)
+        public async Task<IEnumerable<IdentityResult>> Update(string currentUserName, string newUserName, string currentPassword, string newPassword, string currentEmail, string newEmail)
         {
             var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.UserName == currentUserName);
-            if (newUserName != null) await _userManager.SetUserNameAsync(user, newUserName);
-            if (newPassword != null) await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
-            if (newEmail != null) await _userManager.ChangeEmailAsync(user, newEmail, await _userManager.GenerateChangeEmailTokenAsync(user, newEmail));
+            var result = new List<IdentityResult>();
+            if (user == null) return new[] { IdentityResult.Failed(new[] { new IdentityError() { Code = "UserNotFound", Description = "User could not be found" } }) };
+            if (newUserName != null) result.Add(await _userManager.SetUserNameAsync(user, newUserName));
+            if (newPassword != null) result.Add(await _userManager.ChangePasswordAsync(user, currentPassword, newPassword));
+            if (newEmail != null) result.Add(await _userManager.ChangeEmailAsync(user, newEmail, await _userManager.GenerateChangeEmailTokenAsync(user, newEmail)));
 
-            return user;
+            return result;
         }
 
         public async Task<ApplicationUser> Get(string id)
         {
             return await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        public async Task<IdentityResult> Delete(string id)
+        {
+            return await _userManager.DeleteAsync(await Get(id));
         }
     }
 }
