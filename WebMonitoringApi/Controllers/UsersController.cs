@@ -5,8 +5,8 @@ using WebMonitoringApi.InputModels;
 
 namespace WebMonitoringApi.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
+    [ApiController]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
