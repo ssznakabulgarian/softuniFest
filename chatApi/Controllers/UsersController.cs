@@ -1,4 +1,4 @@
-﻿using chatApi.Data.Models.Input_Models;
+﻿using chatApi.InputModels;
 using chatApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
