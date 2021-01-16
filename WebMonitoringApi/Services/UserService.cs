@@ -22,7 +22,7 @@ namespace WebMonitoringApi.Services
 
             var values = new Dictionary<string, string>
             {
-                { "client_id", "api" },
+                { "client_id", "WebMonitoringApi" },
                 { "grant_type", "password" },
                 { "username", username },
                 { "password", password },
