@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
 
 namespace WebMonitoringApi.Data.Models
 {
     public class ApplicationUser : IdentityUser
     {
-        public ApplicationUser() : base()
+        public ApplicationUser()
         {
             Urls = new HashSet<Url>();
         }

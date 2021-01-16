@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace WebMonitoringApi.Data.Models
 {
@@ -21,7 +18,7 @@ namespace WebMonitoringApi.Data.Models
         public string Value { get; set; }
 
         public string Title { get; set; }
-        
+
         public bool Favourite { get; set; }
 
         //TODO: add favIcon

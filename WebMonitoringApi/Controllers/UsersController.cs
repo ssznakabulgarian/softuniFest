@@ -3,8 +3,8 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WebMonitoringApi.Services;
 using WebMonitoringApi.InputModels;
+using WebMonitoringApi.Services;
 
 namespace WebMonitoringApi.Controllers
 {
@@ -53,9 +53,8 @@ namespace WebMonitoringApi.Controllers
                                                    input.NewEmail);
 
             foreach (var identityResult in result)
-            {
-                if (!identityResult.Succeeded) return BadRequest(result);
-            }
+                if (!identityResult.Succeeded)
+                    return BadRequest(result);
 
             return Ok(result);
         }

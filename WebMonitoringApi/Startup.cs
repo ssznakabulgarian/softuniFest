@@ -46,16 +46,17 @@ namespace WebMonitoringApi
                     .AddAspNetIdentity<ApplicationUser>();
 
             services.AddAuthentication("Bearer")
-                    .AddJwtBearer("Bearer", options =>
-                     {
-                         options.Authority = "https://localhost:44340/";
+                    .AddJwtBearer("Bearer",
+                                  options =>
+                                  {
+                                      options.Authority = "https://localhost:44340/";
 
-                         options.Audience = "WebMonitoringApi";
+                                      options.Audience = "WebMonitoringApi";
 
-                         //options.RequireHttpsMetadata = false;
+                                      //options.RequireHttpsMetadata = false;
 
-                         options.TokenValidationParameters.ValidateIssuer = false;
-                     });
+                                      options.TokenValidationParameters.ValidateIssuer = false;
+                                  });
 
             services.AddAuthorization(options =>
             {
@@ -70,23 +71,17 @@ namespace WebMonitoringApi
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
             app.UseIdentityServer();
-            
+
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
 }
