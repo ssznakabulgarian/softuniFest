@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace chatApi.Data.Models
+﻿namespace WebMonitoringApi.Data.Models
 {
     public class SignInResult
     {

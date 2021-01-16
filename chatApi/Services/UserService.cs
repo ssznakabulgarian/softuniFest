@@ -1,10 +1,10 @@
-﻿using chatApi.Data.Models;
-using Microsoft.AspNetCore.Identity;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using WebMonitoringApi.Data.Models;
 
-namespace chatApi.Services
+namespace WebMonitoringApi.Services
 {
     public class UserService : IUserService
     {
@@ -39,7 +39,7 @@ namespace chatApi.Services
             }; //TODO: figure out how to serialize the http request result
         }
 
-        public async Task<IdentityResult> Create(string username, string password, string email, string address)
+        public async Task<IdentityResult> Create(string username, string password, string email)
         {
             return await _userManager.CreateAsync(new ApplicationUser { UserName = username, Email = email }, password);
         }

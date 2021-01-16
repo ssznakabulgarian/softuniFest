@@ -1,8 +1,8 @@
-﻿using IdentityServer4;
+﻿using System.Collections.Generic;
+using IdentityServer4;
 using IdentityServer4.Models;
-using System.Collections.Generic;
 
-namespace chatApi
+namespace WebMonitoringApi
 {
     public class Config
     {

@@ -1,6 +1,3 @@
-using chatApi.Data;
-using chatApi.Data.Models;
-using chatApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -10,8 +7,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using WebMonitoringApi.Data;
+using WebMonitoringApi.Data.Models;
+using WebMonitoringApi.Services;
 
-namespace chatApi
+namespace WebMonitoringApi
 {
     public class Startup
     {

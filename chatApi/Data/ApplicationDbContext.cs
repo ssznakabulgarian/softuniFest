@@ -2,10 +2,9 @@
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using System;
-using chatApi.Data.Models;
+using WebMonitoringApi.Data.Models;
 
-namespace chatApi.Data
+namespace WebMonitoringApi.Data
 {
     public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>
     {

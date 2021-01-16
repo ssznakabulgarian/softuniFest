@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace chatApi.InputModels
+namespace WebMonitoringApi.InputModels
 {
     public class SignUpUserInputModel
     {

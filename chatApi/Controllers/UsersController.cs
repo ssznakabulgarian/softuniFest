@@ -1,9 +1,9 @@
-﻿using chatApi.InputModels;
-using chatApi.Services;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
+using WebMonitoringApi.InputModels;
+using WebMonitoringApi.Services;
 
-namespace chatApi.Controllers
+namespace WebMonitoringApi.Controllers
 {
     [ApiController]
     [Route("api/[Controller]")]
@@ -29,7 +29,7 @@ namespace chatApi.Controllers
         [HttpPost]
         public async Task<IActionResult> SingUp(SignUpUserInputModel input)
         {
-            var result = await _userService.Create(input.UserName, input.Password, input.Email, null);
+            var result = await _userService.Create(input.UserName, input.Password, input.Email);
             if (result.Succeeded)
                 return Ok(result);
             else
