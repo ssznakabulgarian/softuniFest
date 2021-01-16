@@ -2,7 +2,7 @@
 
 namespace WebMonitoringApi.InputModels
 {
-    public class SignInUserInputModel
+    public class LoginInputModel
     {
         [MaxLength(100)]
         public string UserName { get; set; }

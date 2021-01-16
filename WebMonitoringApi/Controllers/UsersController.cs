@@ -1,12 +1,12 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using WebMonitoringApi.InputModels;
 using WebMonitoringApi.Services;
+using WebMonitoringApi.InputModels;
 
 namespace WebMonitoringApi.Controllers
 {
     [ApiController]
-    [Route("api/[Controller]")]
+    [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -16,24 +16,18 @@ namespace WebMonitoringApi.Controllers
             _userService = userService;
         }
 
-        [HttpGet("login")]
-        public async Task<IActionResult> SignIn(SignInUserInputModel input)
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(LoginInputModel input)
         {
             var result = await _userService.Authenticate(input.UserName, input.Password);
-            if (result.Succeeded)
-                return Ok(result);
-            else
-                return BadRequest(result);
+            return result.Succeeded ? Ok(result) : BadRequest(result);
         }
 
         [HttpPost]
-        public async Task<IActionResult> SingUp(SignUpUserInputModel input)
+        public async Task<IActionResult> Register(RegisterInputModel input)
         {
             var result = await _userService.Create(input.UserName, input.Password, input.Email);
-            if (result.Succeeded)
-                return Ok(result);
-            else
-                return BadRequest(result);
+            return result.Succeeded ? Ok(result) : BadRequest(result);
         }
     }
 }

@@ -1,8 +1,9 @@
-﻿namespace WebMonitoringApi.Data.Models
+﻿namespace WebMonitoringApi.Common
 {
-    public class SignInResult
+    public class LoginResult
     {
         public bool Succeeded { get; set; }
+
         public string Jwt { get; set; }
     }
 }

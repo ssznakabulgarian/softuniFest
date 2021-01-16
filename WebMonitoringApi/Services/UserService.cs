@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
+using WebMonitoringApi.Common;
+using System.Collections.Generic;
 using WebMonitoringApi.Data.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace WebMonitoringApi.Services
 {
@@ -15,7 +16,7 @@ namespace WebMonitoringApi.Services
             _userManager = userManager;
         }
 
-        public async Task<Data.Models.SignInResult> Authenticate(string username, string password)
+        public async Task<LoginResult> Authenticate(string username, string password)
         {
             var httpClient = new HttpClient();
 
@@ -32,11 +33,11 @@ namespace WebMonitoringApi.Services
 
             var response = await httpClient.PostAsync("https://localhost:44340/connect/token", content);
             
-            return new Data.Models.SignInResult
+            return new LoginResult
             {
                 Succeeded = response.IsSuccessStatusCode,
                 Jwt = await response.Content.ReadAsStringAsync()
-            }; //TODO: figure out how to serialize the http request result
+            }; 
         }
 
         public async Task<IdentityResult> Create(string username, string password, string email)

@@ -1,12 +1,13 @@
 ﻿using System.Threading.Tasks;
+using WebMonitoringApi.Common;
 using Microsoft.AspNetCore.Identity;
 
 namespace WebMonitoringApi.Services
 {
     public interface IUserService
     {
-        public Task<Data.Models.SignInResult> Authenticate(string username, string password);
+        Task<LoginResult> Authenticate(string username, string password);
 
-        public Task<IdentityResult> Create(string username, string password, string email);
+        Task<IdentityResult> Create(string username, string password, string email);
     }
 }

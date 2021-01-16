@@ -7,9 +7,5 @@ namespace WebMonitoringApi.Data.Models
         public ApplicationUser() : base()
         {
         }
-
-        public ApplicationUser(string username) : base(username)
-        {
-        }
     }
 }
