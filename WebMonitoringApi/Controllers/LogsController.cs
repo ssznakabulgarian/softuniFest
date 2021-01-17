@@ -57,10 +57,6 @@ namespace WebMonitoringApi.Controllers
 
                     return Ok(logs);
                 }
-                else
-                {
-                    //user, feature
-                }
             }
             return BadRequest();
         }

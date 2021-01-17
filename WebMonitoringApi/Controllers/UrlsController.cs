@@ -60,9 +60,9 @@ namespace WebMonitoringApi.Controllers
         public IActionResult Get()
         {
             var userId = User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
-            var currentUrls = _dbContext.Users.FirstOrDefault(User => User.Id == userId).Urls;
+            var currentUrls = _dbContext.Urls.Where(Url => Url.UserId == userId);
 
-            if (currentUrls.Count == 0
+            if (currentUrls.Count() == 0
                 || currentUrls == null)
             {
                 return BadRequest();
