@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using WebMonitoringApi.Data;
 using WebMonitoringApi.Data.Models;
+using WebMonitoringApi.Hubs;
 using WebMonitoringApi.Services;
 
 namespace WebMonitoringApi
@@ -36,6 +37,7 @@ namespace WebMonitoringApi
                     options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<MonitoringService>();
 
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
                      {
@@ -74,6 +76,7 @@ namespace WebMonitoringApi
                                        .Build();
             });
 
+            services.AddSignalR();
             services.AddControllers();
         }
 
@@ -91,7 +94,11 @@ namespace WebMonitoringApi
 
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseEndpoints(endpoints => 
+            { 
+                endpoints.MapControllers();
+                endpoints.MapHub<NotificationHub>("/dashboard");
+            });
         }
     }
 }

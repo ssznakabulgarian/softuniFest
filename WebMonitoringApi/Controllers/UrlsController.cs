@@ -9,6 +9,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using System.Collections.Generic;
+using WebMonitoringApi.Services;
 
 namespace WebMonitoringApi.Controllers
 {
@@ -17,32 +18,26 @@ namespace WebMonitoringApi.Controllers
     [Authorize]
     public class UrlsController : ControllerBase
     {
-        public readonly ApplicationDbContext _dbContext;
+        private readonly ApplicationDbContext _dbContext;
+        private readonly MonitoringService _monitoringService;
 
-        public UrlsController(ApplicationDbContext dbContext)
+        public UrlsController(ApplicationDbContext dbContext, MonitoringService monitoringService)
         {
             _dbContext = dbContext;
+            _monitoringService = monitoringService;
         }
 
         [HttpPost]
         public async Task<IActionResult> Post(UrlInputModel input)
         {
-            if(input == null)
+            if (input == null)
             {
                 return BadRequest();
             }
 
-            /*await _dbContext.Urls.AddAsync(new Url
-            {
-                Id = input.Id,
-                Favourite = input.Favourite,
-                Value = input.Value,
-                Title = input.Title,
-                RequestFrequencySeconds = input.RequestFrequencySeconds,
-            });*/
-
             var userId = User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
-            _dbContext.Users.FirstOrDefault(User => User.Id == userId)?.Urls.Add(new Url
+
+            var newUrl = new Url
             {
                 Favourite = input.Favourite,
                 Value = input.Value,
@@ -50,11 +45,13 @@ namespace WebMonitoringApi.Controllers
                 RequestFrequencySeconds = input.RequestFrequencySeconds,
                 Method = input.Method,
                 UserId = userId
-        });
+            };
+
+            _dbContext.Users.FirstOrDefault(User => User.Id == userId)?.Urls.Add(newUrl);
 
             _dbContext.SaveChanges();
 
-            //check if added?
+            _monitoringService.AttachTimerToUrl(newUrl);
 
             return Ok();
         }
@@ -65,7 +62,7 @@ namespace WebMonitoringApi.Controllers
             var userId = User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
             var currentUrls = _dbContext.Users.FirstOrDefault(User => User.Id == userId).Urls;
 
-            if(currentUrls.Count == 0
+            if (currentUrls.Count == 0
                 || currentUrls == null)
             {
                 return BadRequest();
@@ -80,7 +77,7 @@ namespace WebMonitoringApi.Controllers
             var currentUrl = _dbContext.Users.FirstOrDefault(User => User.Id == userId)?
                             .Urls.FirstOrDefault(Url => Url.Id == id);
 
-            if(currentUrl != null)
+            if (currentUrl != null)
             {
                 return Ok(currentUrl);
             }
