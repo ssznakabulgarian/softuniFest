@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using IdentityModel.Client;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 using WebMonitoringApi.Common;
 using WebMonitoringApi.Data;
 using WebMonitoringApi.Data.Models;
@@ -20,7 +23,7 @@ namespace WebMonitoringApi.Services
             _dbContext = dbContext;
         }
 
-        public async Task<LoginResult> Authenticate(string username, string password)
+        public async Task<TokenResponse> Authenticate(string username, string password)
         {
             var httpClient = new HttpClient();
 
@@ -35,13 +38,16 @@ namespace WebMonitoringApi.Services
 
             var content = new FormUrlEncodedContent(values);
 
-            var response = await httpClient.PostAsync("https://localhost:44340/connect/token", content);
-
-            return new LoginResult
+            return await new HttpClient().RequestPasswordTokenAsync(new PasswordTokenRequest
             {
-                Succeeded = response.IsSuccessStatusCode,
-                Jwt = await response.Content.ReadAsStringAsync()
-            };
+                Address = "https://localhost:44340/connect/token",
+
+                ClientId = "WebMonitoringApi",
+                Scope = "WebMonitoringApi",
+
+                UserName = username,
+                Password = password
+            });
         }
 
         public async Task<IdentityResult> Create(string username, string password, string email)

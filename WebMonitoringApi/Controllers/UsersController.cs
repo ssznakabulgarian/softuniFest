@@ -23,7 +23,14 @@ namespace WebMonitoringApi.Controllers
         public async Task<IActionResult> Login(LoginInputModel input)
         {
             var result = await _userService.Authenticate(input.UserName, input.Password);
-            return result.Succeeded ? Ok(result) : BadRequest(result);
+            return !result.IsError
+                ? Ok(new {result.AccessToken,
+                          result.ExpiresIn,
+                          result.TokenType})
+                : BadRequest(new {result.ErrorDescription,
+                                       result.Error,
+                                       result.ErrorType,
+                                       result.HttpErrorReason});
         }
 
         [HttpPost]

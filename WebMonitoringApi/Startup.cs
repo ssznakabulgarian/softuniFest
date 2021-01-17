@@ -26,11 +26,10 @@ namespace WebMonitoringApi
         {
             services.AddCors(options =>
             {
-                options.AddDefaultPolicy(
-                                         builder =>
-                                         {
-                                             builder.WithOrigins("localhost","example.com");
-                                         });
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder.WithOrigins("localhost","example.com");
+                });
             });
 
             services.AddDbContext<ApplicationDbContext>(options => 
