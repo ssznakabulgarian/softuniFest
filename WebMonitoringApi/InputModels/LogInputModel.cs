@@ -7,8 +7,6 @@ namespace WebMonitoringApi.InputModels
 {
     public class LogInputModel
     {
-        public int Id { get; set; }
-
         public string SortBy { get; set; }
         
         public string Url { get; set; }
