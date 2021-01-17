@@ -7,6 +7,7 @@ using System.Linq;
 using WebMonitoringApi.Common;
 using System.Security.Claims;
 using WebMonitoringApi.Data.Models;
+using System.Collections.Generic;
 
 namespace WebMonitoringApi.Controllers
 {
@@ -23,7 +24,38 @@ namespace WebMonitoringApi.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get(LogInputModel input)
+        public IActionResult Get()
+        {
+            var userId = User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
+            var currentUrls = _dbContext.Urls.Where(Url => Url.UserId == userId);
+
+            if (currentUrls.Count() == 0
+                || currentUrls == null)
+            {
+                return BadRequest();
+            }
+
+            var logs = new List<Log>();
+
+            for(int i = 0; i < currentUrls.ToArray().Length; i++)
+            {
+                var currentUrl = currentUrls.ToArray()[i];
+                for(int j = 0; j < currentUrl.Logs.ToArray().Length; j++)
+                {
+                    logs.Add(currentUrl.Logs.ToArray()[j]);
+                }
+            }
+
+            if(logs.Count() == 0)
+            {
+                return BadRequest();
+            }
+
+            return Ok(logs);
+        }
+
+        [HttpGet("ByRequest")]
+        public IActionResult GetByRequest(LogInputModel input)
         {
             if (input != null)
             {
@@ -61,16 +93,17 @@ namespace WebMonitoringApi.Controllers
             return BadRequest();
         }
 
-        [HttpDelete]
-        public IActionResult Delete(LogInputModel input)
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
         {
-            if(input != null)
-            {
-                _dbContext.Logs.Remove(_dbContext.Logs.FirstOrDefault(log => log.Id == input.Id));
-                _dbContext.SaveChanges();
+            var response = _dbContext.Logs.Remove(_dbContext.Logs.FirstOrDefault(log => log.Id == id));
 
+            if(response.State == Microsoft.EntityFrameworkCore.EntityState.Deleted)
+            {
+                _dbContext.SaveChanges();
                 return Ok();
             }
+
             return BadRequest();
         }
     }
