@@ -1,12 +1,18 @@
 ﻿using System;
+using System.Net;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Net;
 
 namespace WebMonitoringApi.Data.Models
 {
     public class Log
     {
+        public Log()
+        {
+            Headers = new HashSet<Header>();
+        }
+
         [Key]
         public int Id { get; set; }
 
@@ -16,16 +22,18 @@ namespace WebMonitoringApi.Data.Models
         public bool Succeeded { get; set; }
 
         [Required]
-        public DateTime Sent { get; set; }
+        public DateTime SentOn { get; set; }
 
         [Required]
-        public DateTime Received { get; set; }
+        public DateTime ReceivedOn { get; set; }
+
+        public string Body { get; set; }
 
         [ForeignKey(nameof(Url))]
         public int UrlId { get; set; }
 
         public Url Url { get; set; }
 
-        //TODO: add error list
+        public virtual ICollection<Header> Headers { get; set; }
     }
 }

@@ -8,6 +8,7 @@ namespace WebMonitoringApi.Data.Models
         public Url()
         {
             Logs = new HashSet<Log>();
+            Headers = new HashSet<Header>();
         }
 
         [Key]
@@ -21,10 +22,15 @@ namespace WebMonitoringApi.Data.Models
 
         public bool Favourite { get; set; }
 
-        //TODO: add favIcon
-
         public long RequestFrequencySeconds { get; set; }
 
+        [Required]
+        public string Method { get; set; }
+
+        public string Body { get; set; }
+
         public virtual ICollection<Log> Logs { get; set; }
+
+        public virtual ICollection<Header> Headers { get; set; }
     }
 }

@@ -1,8 +1,8 @@
-﻿using IdentityServer4.EntityFramework.Options;
-using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using WebMonitoringApi.Data.Models;
+using Microsoft.EntityFrameworkCore;
+using IdentityServer4.EntityFramework.Options;
+using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 
 namespace WebMonitoringApi.Data
 {
@@ -16,5 +16,7 @@ namespace WebMonitoringApi.Data
         public DbSet<Log> Logs { get; set; }
 
         public DbSet<Url> Urls { get; set; }
+
+        public DbSet<Header> Headers { get; set; }
     }
 }
