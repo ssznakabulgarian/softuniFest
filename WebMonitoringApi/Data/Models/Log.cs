@@ -10,7 +10,7 @@ namespace WebMonitoringApi.Data.Models
     {
         public Log()
         {
-            Headers = new HashSet<Header>();
+            Headers = new HashSet<ResponseHeader>();
         }
 
         [Key]
@@ -35,6 +35,6 @@ namespace WebMonitoringApi.Data.Models
 
         public Url Url { get; set; }
 
-        public virtual ICollection<Header> Headers { get; set; }
+        public virtual ICollection<ResponseHeader> Headers { get; set; }
     }
 }

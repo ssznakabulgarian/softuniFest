@@ -17,6 +17,7 @@ namespace WebMonitoringApi.Data
 
         public DbSet<Url> Urls { get; set; }
 
-        public DbSet<Header> Headers { get; set; }
+        public DbSet<ResponseHeader> ResponseHeaders { get; set; }
+        public DbSet<RequestHeader> RequestHeaders { get; set; }
     }
 }
