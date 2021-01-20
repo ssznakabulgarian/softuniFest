@@ -13,9 +13,9 @@ namespace WebMonitoringApi.Common
 
         public HttpStatusCode StatusCode { get; set; }
 
-        public DateTime Sent { get; set; }
+        public DateTime SentOn { get; set; }
 
-        public DateTime Received { get; set; }
+        public DateTime ReceivedOn { get; set; }
 
         public int ExecutionTime { get; set; }
 

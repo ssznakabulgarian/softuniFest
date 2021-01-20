@@ -8,6 +8,7 @@ using WebMonitoringApi.Common;
 using System.Security.Claims;
 using WebMonitoringApi.Data.Models;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebMonitoringApi.Controllers
 {
@@ -23,11 +24,38 @@ namespace WebMonitoringApi.Controllers
             _dbContext = dbContext;
         }
 
+        //This function is used for testing, should be deleted later. It is as simple as it can be.
+        [HttpPost]
+        public IActionResult Create()
+        {
+            var url = _dbContext.Urls.FirstOrDefault(Url => Url.Id == 6);
+
+            var log = new Log
+            {
+                Body = "Log's body",
+                StatusCode = System.Net.HttpStatusCode.OK,
+                SentOn = DateTime.UtcNow,
+                ReceivedOn = DateTime.UtcNow,
+                Succeeded = true,
+            };
+
+            log.Headers.Add(new ResponseHeader
+            {
+                Key = "key",
+                Value = "value"
+            });
+
+            url.Logs.Add(log);
+            _dbContext.SaveChanges();
+
+            return Ok();
+        }
+
         [HttpGet]
         public IActionResult Get()
         {
             var userId = User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
-            var currentUrls = _dbContext.Urls.Where(Url => Url.UserId == userId);
+            var currentUrls = _dbContext.Urls.Include(Url => Url.Logs).Where(Url => Url.UserId == userId);
 
             if (currentUrls.Count() == 0
                 || currentUrls == null)
@@ -35,18 +63,30 @@ namespace WebMonitoringApi.Controllers
                 return BadRequest();
             }
 
-            var logs = new List<Log>();
+            var logs = new List<LogResult>();
+
+            Log tempLog;
+            Url tempUrl;
 
             for(int i = 0; i < currentUrls.ToArray().Length; i++)
             {
-                var currentUrl = currentUrls.ToArray()[i];
-                for(int j = 0; j < currentUrl.Logs.ToArray().Length; j++)
+                tempUrl = currentUrls.ToArray()[i];
+                for(int j = 0; j < tempUrl.Logs.ToArray().Length; j++)
                 {
-                    logs.Add(currentUrl.Logs.ToArray()[j]);
+                    tempLog = tempUrl.Logs.ToArray()[j];
+                    logs.Add(new LogResult
+                    {
+                        Id = tempLog.Id,
+                        ExecutionTime = tempLog.SentOn.Subtract(tempLog.ReceivedOn).Milliseconds,
+                        SentOn = tempLog.SentOn,
+                        ReceivedOn = tempLog.ReceivedOn,
+                        Url = tempUrl.Value,
+                        StatusCode = tempLog.StatusCode
+                    });
                 }
             }
 
-            if(logs.Count() == 0)
+            if(logs.Count == 0)
             {
                 return BadRequest();
             }
@@ -77,17 +117,17 @@ namespace WebMonitoringApi.Controllers
                         logs.Take(input.Limit);
                     }
 
-                    logs.Select(log => new LogResult
+                    var logResults = logs.Select(log => new LogResult
                     {
                         Id = log.Id,
-                        Sent = log.SentOn,
-                        Received = log.ReceivedOn,
+                        SentOn = log.SentOn,
+                        ReceivedOn = log.ReceivedOn,
                         ExecutionTime = log.SentOn.Subtract(log.ReceivedOn).Milliseconds,
                         StatusCode = log.StatusCode,
                         Url = log.Url.Value,
                     });
 
-                    return Ok(logs);
+                    return Ok(logResults);
                 }
             }
             return BadRequest();
@@ -96,9 +136,16 @@ namespace WebMonitoringApi.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var response = _dbContext.Logs.Remove(_dbContext.Logs.FirstOrDefault(log => log.Id == id));
+            var log = _dbContext.Logs.FirstOrDefault(log => log.Id == id);
 
-            if(response.State == Microsoft.EntityFrameworkCore.EntityState.Deleted)
+            if(log == null)
+            {
+                return BadRequest();
+            }
+
+            var response = _dbContext.Logs.Remove(log);
+
+            if(response.Entity.Id == id)
             {
                 _dbContext.SaveChanges();
                 return Ok();

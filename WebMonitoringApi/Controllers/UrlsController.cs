@@ -139,10 +139,10 @@ namespace WebMonitoringApi.Controllers
             }
 
             var result = _dbContext.Urls.Remove(url);
-            _dbContext.SaveChanges();
 
             if(result.Entity.Id == id)
             {
+                _dbContext.SaveChanges();
                 return Ok();
             }
 
