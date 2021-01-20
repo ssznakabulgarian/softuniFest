@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using System.Collections.Generic;
 using WebMonitoringApi.Services;
+using WebMonitoringApi.Common;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebMonitoringApi.Controllers
 {
@@ -44,7 +46,9 @@ namespace WebMonitoringApi.Controllers
                 Title = input.Title,
                 RequestFrequencySeconds = input.RequestFrequencySeconds,
                 Method = input.Method,
-                UserId = userId
+                UserId = userId,
+                Body = input.Body,
+                Headers = input.Headers
             };
 
             _dbContext.Users.FirstOrDefault(User => User.Id == userId)?.Urls.Add(newUrl);
@@ -67,34 +71,81 @@ namespace WebMonitoringApi.Controllers
             {
                 return BadRequest();
             }
-            return Ok(currentUrls);
+
+            var urlResults = currentUrls.Select(Url => new UrlResult
+            {
+                Id = Url.Id,
+                Value = Url.Value,
+                Title = Url.Title,
+                Body = Url.Body,
+                Favourite = Url.Favourite,
+                Method = Url.Method,
+                RequestFrequencySeconds = Url.RequestFrequencySeconds,
+                Headers = Url.Headers.Select(header => new RequestHeaderResult
+                {
+                    Key = header.Key,
+                    Value = header.Value
+                })
+            });
+
+            return Ok(urlResults);
         }
 
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
             var userId = User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
-            var currentUrl = _dbContext.Users.FirstOrDefault(User => User.Id == userId)?
-                            .Urls.FirstOrDefault(Url => Url.Id == id);
 
-            if (currentUrl != null)
+            var currentUrls = _dbContext.Urls.Where(Url => Url.UserId == userId);
+
+            if (currentUrls.Count() == 0
+                || currentUrls == null)
             {
-                return Ok(currentUrl);
+                return BadRequest();
+            }
+
+            var urlResult = currentUrls.Select(Url => new UrlResult
+            {
+                Id = Url.Id,
+                Value = Url.Value,
+                Title = Url.Title,
+                Body = Url.Body,
+                Favourite = Url.Favourite,
+                Method = Url.Method,
+                RequestFrequencySeconds = Url.RequestFrequencySeconds,
+                Headers = Url.Headers.Select(header => new RequestHeaderResult
+                {
+                    Key = header.Key,
+                    Value = header.Value
+                })
+            }).Where(Url => Url.Id == id);
+
+            if (urlResult != null)
+            {
+                return Ok(urlResult);
             }
 
             return BadRequest();
         }
 
-        [HttpDelete] //delete by id
-        public IActionResult Delete(UrlInputModel input)
+        [HttpDelete("{id}")] //delete by id
+        public IActionResult Delete(int id)
         {
-            if (input != null)
+            var url = _dbContext.Urls.FirstOrDefault(url => url.Id == id);
+            
+            if(url == null)
             {
-                _dbContext.Urls.Remove(_dbContext.Urls.FirstOrDefault(url => url.Id == input.Id));
-                _dbContext.SaveChanges();
+                return BadRequest();
+            }
 
+            var result = _dbContext.Urls.Remove(url);
+            _dbContext.SaveChanges();
+
+            if(result.Entity.Id == id)
+            {
                 return Ok();
             }
+
             return BadRequest();
         }
     }

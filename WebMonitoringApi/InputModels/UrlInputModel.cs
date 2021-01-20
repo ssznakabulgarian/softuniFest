@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using WebMonitoringApi.Data.Models;
 
 namespace WebMonitoringApi.InputModels
 {
@@ -21,5 +22,9 @@ namespace WebMonitoringApi.InputModels
         public bool Favourite { get; set; }
 
         public long RequestFrequencySeconds { get; set; }
+
+        public string Body { get; set; }
+
+        public virtual ICollection<RequestHeader> Headers { get; set; }
     }
 }
